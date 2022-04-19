@@ -1,0 +1,181 @@
+#include <windows.h>
+#include <GL/glut.h>
+#include<Gl/gl.h>
+#include <iostream>
+#include<stdlib.h>
+#include<math.h>
+
+const double PI = 2.0 * acos(0.0);
+
+
+
+using namespace std;
+
+GLfloat boatPosition = 0.0f,carPosition = 0.0f,carPosition1 = 0.0f,railPosition=0.0f,rotatei=-10.0f,rotatei1=0.0f,sunPosition=0.0f,moonPosition=0.0f,positionRain = 0.0f;
+GLfloat boatSpeed= 0.0f,carSpeed= 0.0f,carSpeed1= 0.0f,railSpeed=0.0f,sunSpeed=0.0f,moonSpeed=0.0f,rainSpeed=0.01;
+double rainX = -1.0,rainY;
+static GLint f1=0,f2=0,f3=0,f4=0;
+bool rt = true,rainday=false,night=false;
+
+void update(int value)
+{
+    if (boatPosition < -1.1)
+        boatPosition = 1.0f;
+    else if (boatPosition > 1.0)
+        boatPosition = -1.0f;
+
+    if (carPosition < -0.2)
+        carPosition = 1.98f;
+    else if (carPosition > 1.98)
+        carPosition = -0.2f;
+
+    if (carPosition1 < -1.5)
+        carPosition1 = 1.0f;
+
+    if (railPosition < -1.9)
+        railPosition = 0.7;
+    else if (railPosition > 1.98)
+        railPosition = -1.0f;
+
+    if (sunPosition < -1.0)
+    {
+        sunPosition=-1.0;
+        night=true;
+    }
+
+    if (moonPosition > 0.8)
+        moonPosition=0.8;
+
+    if (positionRain < -0.5)
+        positionRain=0.0;
+
+    boatPosition -=boatSpeed;
+    carPosition -=carSpeed;
+    carPosition1 -=carSpeed1;
+    railPosition-=railSpeed;
+    sunPosition-=sunSpeed;
+    moonPosition-=moonSpeed;
+    positionRain-=rainSpeed;
+    glutPostRedisplay();
+    glutTimerFunc(100, update,0);
+}
+
+void stop()
+{
+    carSpeed = 0.0f;
+    carSpeed1 = 0.0f;
+    boatSpeed = 0.0f;
+    railSpeed = 0.0f;
+}
+
+void circle(GLfloat x, GLfloat y, GLfloat r)
+{
+    int i;
+    int triangleAmount = 20; //# of triangles used to draw circle
+    GLfloat twicePi = 2.0f * PI;
+    glBegin(GL_TRIANGLE_FAN);
+
+    glVertex2f(x, y); // center of circle
+    for(i = 0; i <= triangleAmount; i++)
+    {
+        glVertex2f(
+            x+(r*cos(i * twicePi / triangleAmount)),
+            y+(r*sin(i * twicePi / triangleAmount))
+        );
+    }
+    glEnd();
+}
+
+
+void boat()
+{
+    glPushMatrix();
+    glTranslatef(boatPosition, 0.0f,0.0f);
+
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, .0f, 0.0f);
+
+    glVertex3f(-0.03f, -0.92f,0.0f);
+    glVertex3f(0.03f,-0.92f,0.0f);
+    glVertex3f(0.13f, -0.85f,0.0f);
+    glVertex3f(-0.13f,-0.85f,0.0f);
+
+
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(0.10f, -0.85f,0.0f);
+    glVertex3f(-0.10f,-0.85f,0.0f);;
+    glVertex3f(-0.10f, -0.83f,0.0f);
+    glVertex3f(0.10f, -0.83f,0.0f);
+
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(0.07f, -0.83f,0.0f);
+    glVertex3f(-0.07f,-0.83f,0.0f);;
+    glVertex3f(-0.07f, -0.81f,0.0f);
+    glVertex3f(0.07f, -0.81f,0.0f);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex3f(-0.05f, -0.81f,0.0f);
+    glVertex3f(-0.04f,-0.81f,0.0f);;
+    glVertex3f(-0.04f, -0.79f,0.0f);
+    glVertex3f(-0.05f, -0.79f,0.0f);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex3f(-0.01f, -0.81f,0.0f);
+    glVertex3f(0.0f,-0.81f,0.0f);
+    glVertex3f(0.0f, -0.79f,0.0f);
+    glVertex3f(-0.01f, -0.79f,0.0f);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex3f(0.03f, -0.81f,0.0f);
+    glVertex3f(0.04f,-0.81f,0.0f);;
+    glVertex3f(0.04f, -0.79f,0.0f);
+    glVertex3f(0.03f, -0.79f,0.0f);
+
+    glEnd();
+    glPopMatrix();
+    glFlush();
+}
+
+
+void road()
+{
+    glBegin(GL_QUADS);
+    glColor3ub	(0,0,0);
+    //road black shade
+    glVertex2f(-1.0f, -0.65f);
+    glVertex2f(-1.0f, -0.41f);
+    glVertex2f(1.0f, -0.41f);
+    glVertex2f(1.0f, -0.65f);
+    glEnd();
+
+
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    //road lane line between road
+    glVertex2f(-1.0f, -0.53f);
+    glVertex2f(-0.8f, -0.53f);
+
+    glVertex2f(-0.75f, -0.53f);
+    glVertex2f(-0.55f, -0.53f);
+
+    glVertex2f(-0.5f, -0.53f);
+    glVertex2f(-0.3f, -0.53f);
+
+    glVertex2f(-0.25f, -0.53f);
+    glVertex2f(0.0f, -0.53f);
+
+    glVertex2f(0.05f, -0.53f);
+    glVertex2f(0.25f, -0.53f);
+
+    glVertex2f(0.3f, -0.53f);
+    glVertex2f(0.5f, -0.53f);
+
+    glVertex2f(0.55f, -0.53f);
+    glVertex2f(0.75f, -0.53f);
+
+    glVertex2f(0.8f, -0.53f);
+    glVertex2f(1.0f, -0.53f);
+    glEnd();
+
+    glFlush();
+}
